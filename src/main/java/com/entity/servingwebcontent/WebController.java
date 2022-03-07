@@ -16,4 +16,9 @@ public class WebController {
         return "lastpage";
     }
 
+
+    @GetMapping("/contact")
+    public String contact(Model model) {
+        return "contact";
+    }
 }
