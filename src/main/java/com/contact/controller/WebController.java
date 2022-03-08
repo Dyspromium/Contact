@@ -2,7 +2,7 @@ package com.contact.controller;
 
 import com.contact.repository.ContactRepository;
 import com.contact.entity.Contact;
-import com.contact.entity.Users;
+import com.contact.entity.User;
 import com.sun.jdi.event.ExceptionEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,20 +36,25 @@ public class WebController implements WebMvcConfigurer {
     Contact selected;
 
     @GetMapping("/home")
-    public String home(Model model,Long id) {
-        Iterable<Contact> all = contactRepository.findAll();
-        model.addAttribute("contacts", all);
+    public String home(Model model,Long id, HttpSession session) {
 
-        if(id != null){
-            if(contactRepository.findById(id).isEmpty()){
-                selected = null;
-            }else{
-                selected = contactRepository.findById(id).get();
+        if (session.getAttribute("valueSessionId") == null){
+            return "redirect:/login";
+        } else {
+            Iterable<Contact> all = contactRepository.findAll();
+            model.addAttribute("contacts", all);
+
+            if(id != null){
+                if(contactRepository.findById(id).isEmpty()){
+                    selected = null;
+                }else{
+                    selected = contactRepository.findById(id).get();
+                }
             }
-        }
 
-        model.addAttribute("selected", selected);
-        return "home";
+            model.addAttribute("selected", selected);
+            return "home";
+        }
     }
 
     @RequestMapping(value="/delete", method=RequestMethod.GET)
@@ -61,20 +66,25 @@ public class WebController implements WebMvcConfigurer {
     }
 
     @GetMapping("/add")
-    public String add(Model model, Contact contact) {
-        model.addAttribute("contact", contact);
-        return "add";
+    public String add(Model model, Contact contact, HttpSession session) {
+        if (session.getAttribute("valueSessionId") == null){
+            return "redirect:/login";
+        } else {
+            model.addAttribute("contact", contact);
+            return "add";
+        }
     }
+
     @PostMapping("/add")
-    public String addSubmit(@ModelAttribute Contact contact, BindingResult result, Model model) {
+    public String addSubmit(@ModelAttribute Contact contact, BindingResult result, Model model, HttpSession session) {
         if (Objects.equals(contact.getName(), "")) {
-            return add(model, contact);
+            return add(model, contact, session);
         }
         if(contactRepository.findByMail(contact.getTrymail()).isEmpty()){
             contactRepository.save(contact);
             return "redirect:/home";
         }
-        return add(model, contact);
+        return add(model, contact, session);
     }
 
 

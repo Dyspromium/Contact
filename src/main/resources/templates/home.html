@@ -29,6 +29,12 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/endsession">Deconnexion<span class="sr-only">(current)</span></a>
                 </li>
+                <li class="nav-item">
+                    <div th:switch="${session['valueSessionName']}">
+                        <p th:case="null">None</p>
+                        <p th:case="*" th:utext="${session['valueSessionName']}"><p>
+                    </div>
+                </li>
             </ul>
         </div>
     </nav>
