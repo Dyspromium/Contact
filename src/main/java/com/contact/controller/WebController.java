@@ -40,8 +40,11 @@ public class WebController implements WebMvcConfigurer {
         model.addAttribute("contacts", all);
 
         if(id != null){
-            selected = contactRepository.findById(id).get();
-
+            if(contactRepository.findById(id).isEmpty()){
+                selected = null;
+            }else{
+                selected = contactRepository.findById(id).get();
+            }
         }
 
         model.addAttribute("selected", selected);
