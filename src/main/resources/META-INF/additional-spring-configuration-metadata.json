@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "javax.persistence.jdbc.url",
+      "type": "java.lang.String",
+      "description": "Description for javax.persistence.jdbc.url."
+  }
+] }
