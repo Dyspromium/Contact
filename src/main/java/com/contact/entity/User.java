@@ -1,14 +1,18 @@
 package com.contact.entity;
 
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
 import java.util.Collection;
 
-public class Users {
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
     private String login;
     private String password;
 
-    public Users(String login, String password) {
+    protected User(){};
+
+    public User(String login, String password) {
         this.login = login;
         this.password= password;
     }
@@ -19,6 +23,7 @@ public class Users {
     public String getLogin() {
         return this.login;
     }
+    public int getId(){ return  this.id;}
     public void setLogin(String login) {
         this.login = login;
     }
@@ -30,7 +35,6 @@ public class Users {
         //TODO
 
     }
-
 
     @ManyToMany
     @JoinTable(name="CONTACT")

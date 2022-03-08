@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import javax.servlet.http.HttpSession;
 
 
 @Controller
@@ -26,9 +27,9 @@ public class WebController implements WebMvcConfigurer {
     private ContactRepository contactRepository;
 
     @RequestMapping("/endsession")
-    public String endSession(SessionStatus status){
-        status.setComplete();
-        return "lastpage";
+    public String endSession(HttpSession session){
+        session.invalidate();
+        return "redirect:/home";
     }
 
 
@@ -78,17 +79,19 @@ public class WebController implements WebMvcConfigurer {
 
 
 
-    @GetMapping("/form")
-    public String greetingForm(Model model,String login, String password) {
+    @GetMapping("/login")
+    public String login(Model model, User user) {
         //if pas de users
-        model.addAttribute("users", new Users(login,password));
+        model.addAttribute("users", user);
         //sinon vérif connexion
 
-        return "form";
+        return "login";
     }
-    @PostMapping("/form")
-    public String greetingSubmit(@ModelAttribute Users users, Model model) {
-        model.addAttribute("users", users);
-        return "result";
+    @PostMapping("/login")
+    //TODO  VERIF SESSION  + AFFICHAGE DE LA SESSION SUR CONTACT + VERIFIER JOINTURE ENTRE USER ET CONTACT
+    public String loginSubmit(HttpSession session,User user) {
+        session.setAttribute("valueSessionName", user.getLogin());
+        session.setAttribute("valueSessionId", user.getId());
+        return "redirect:/home";
     }
 }
