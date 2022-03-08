@@ -41,11 +41,13 @@
                         <form th:action="@{/add}" th:object="${contact}" method="post">
                             <div class="form-group">
                                 <label>FullName</label>
-                                <input type="text" class="form-control" th:field="*{name}" placeholder="John Doe">
+                                <input type="text" class="form-control" th:field="*{name}" placeholder="John Doe" required="required">
+                                <td th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</td>
                             </div>
                             <div class="form-group">
                                 <label>Email address</label>
                                 <input type="email" class="form-control" th:field="*{trymail}" placeholder="john.doe@mail.com">
+                                <td th:if="${#fields.hasErrors('trymail')}" th:errors="*{trymail}">Age Error</td>
                             </div>
                             <button type="submit" class="btn btn-primary w-100">Create</button>
                         </form>

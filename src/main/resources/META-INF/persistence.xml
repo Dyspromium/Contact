@@ -5,7 +5,6 @@
 
         <class>com.contact.entity.Contact</class>
         <class>com.contact.entity.Address</class>
-        <class>com.contact.Users</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
             <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:test"/>
