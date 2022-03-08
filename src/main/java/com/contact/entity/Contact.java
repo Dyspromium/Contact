@@ -10,7 +10,7 @@ import java.util.List;
 public class Contact{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private long id;
     private String name;
     private String trymail;
 
@@ -24,13 +24,14 @@ public class Contact{
         this.mail = new ArrayList<String>();
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
     public void setName(String name) {
         this.name = name;
     }
+
     public String getName() {
         return name;
     }

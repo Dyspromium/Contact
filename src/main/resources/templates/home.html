@@ -53,8 +53,12 @@
                     <p th:case="null">No contact Selected</p>
                     <div th:case="*">
                         <h2 th:utext="${selected.name}"></h2>
-                        <button type="button" class="btn btn-primary">Modifier</button>
-                        <button type="button" class="btn btn-danger">Supprimer</button>
+                        <form action="{/edit}" method="#">
+                            <input type="submit" name="action" class="btn-info" value="Modifier" />
+                        </form>
+                        <form action="/delete" method="GET">
+                            <input type="submit" name="action" class="btn btn-danger" value="Delete" />
+                        </form>
                     </div>
                 </div>
             </div>

@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 
 @Controller
@@ -29,14 +32,28 @@ public class WebController implements WebMvcConfigurer {
     }
 
 
-    Contact selected = null;
+    Contact selected;
+
     @GetMapping("/home")
-    public String home(Model model) {
+    public String home(Model model,Long id) {
         Iterable<Contact> all = contactRepository.findAll();
         model.addAttribute("contacts", all);
 
+        if(id != null){
+            selected = contactRepository.findById(id).get();
+
+        }
+
         model.addAttribute("selected", selected);
         return "home";
+    }
+
+    @RequestMapping(value="/delete", method=RequestMethod.GET)
+    public String delete(@RequestParam String action, Model m) {
+
+        contactRepository.deleteById(selected.getId());
+        selected = null;
+        return "redirect:/home";
     }
 
     @GetMapping("/add")
@@ -46,11 +63,14 @@ public class WebController implements WebMvcConfigurer {
     }
     @PostMapping("/add")
     public String addSubmit(@ModelAttribute Contact contact, BindingResult result, Model model) {
+        if (Objects.equals(contact.getName(), "")) {
+            return add(model, contact);
+        }
         if(contactRepository.findByMail(contact.getTrymail()).isEmpty()){
             contactRepository.save(contact);
-            return home(model);
+            return "redirect:/home";
         }
-        return "add";
+        return add(model, contact);
     }
 
 
