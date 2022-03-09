@@ -3,14 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Connexion</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
 </head>
+<style>
+    .avatar {
+        vertical-align: middle;
+        width: 10%;
+        border-radius: 50%;
+    }
+</style>
 <body>
-<div style="display: flex;justify-content: center;margin-top: 100px">
-<form action="#" th:action="@{/login}" th:object="${user}" method="post">
-    <p>Login : <input class="form-control" type="text" th:field="*{login}" /></p>
-    <p>Password : <input type="text" class="form-control" th:field="*{password}" /></p>
-    <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" />
-    </p></form>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div style="display: flex;justify-content: flex-start;align-content: center">
+    <img src="https://zupimages.net/up/22/10/etfe.png" alt="Avatar" class="avatar">
+    <a class="navbar-brand" href="#">Contact Piclos</a>
+    </div>
+
+</nav>
+<div style="display:flex;justify-content: center;align-content: center;margin-top: 50px">
+    <div style="width: 300px;display: flex;justify-content: center;flex-direction: column;">
+        <div style="font-size: xx-large;margin-bottom: 20px;display: flex;align-items: center;justify-content: center;"> Connexion </div>
+        <form action="#" th:action="@{/login}" th:object="${user}" method="post">
+            <p>Login : <input required class="form-control" type="text" th:field="*{login}"/></p>
+            <p>Password : <input required type="text" class="form-control" th:field="*{password}"/></p>
+            <div style="display: flex; justify-content: flex-end">
+                <button type="reset" class="btn btn-outline-secondary" style="margin-right: 30px">Reset</button>
+                <button type="submit" class="btn btn-outline-success">Submit</button>
+            </div>
+        </form>
+    </div>
 </div>
 </body>
 </html>

@@ -3,6 +3,7 @@ package com.contact.controller;
 import com.contact.repository.ContactRepository;
 import com.contact.entity.Contact;
 import com.contact.entity.User;
+import com.sun.jdi.event.ExceptionEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,32 +33,58 @@ public class WebController implements WebMvcConfigurer {
     }
 
 
-    Contact selected = null;
+    Contact selected;
+
     @GetMapping("/home")
-    public String home(Model model, HttpSession session) {
+    public String home(Model model,Long id, HttpSession session) {
+
         if (session.getAttribute("valueSessionId") == null){
             return "redirect:/login";
-        }
-        else {
+        } else {
             Iterable<Contact> all = contactRepository.findAll();
             model.addAttribute("contacts", all);
+
+            if(id != null){
+                if(contactRepository.findById(id).isEmpty()){
+                    selected = null;
+                }else{
+                    selected = contactRepository.findById(id).get();
+                }
+            }
+
             model.addAttribute("selected", selected);
             return "home";
         }
     }
 
-    @GetMapping("/add")
-    public String add(Model model, Contact contact) {
-        model.addAttribute("contact", contact);
-        return "add";
+    @RequestMapping(value="/delete", method=RequestMethod.GET)
+    public String delete(@RequestParam String action, Model m) {
+
+        contactRepository.deleteById(selected.getId());
+        selected = null;
+        return "redirect:/home";
     }
+
+    @GetMapping("/add")
+    public String add(Model model, Contact contact, HttpSession session) {
+        if (session.getAttribute("valueSessionId") == null){
+            return "redirect:/login";
+        } else {
+            model.addAttribute("contact", contact);
+            return "add";
+        }
+    }
+
     @PostMapping("/add")
     public String addSubmit(@ModelAttribute Contact contact, BindingResult result, Model model, HttpSession session) {
+        if (Objects.equals(contact.getName(), "")) {
+            return add(model, contact, session);
+        }
         if(contactRepository.findByMail(contact.getTrymail()).isEmpty()){
             contactRepository.save(contact);
-            return home(model, session);
+            return "redirect:/home";
         }
-        return "add";
+        return add(model, contact, session);
     }
 
 
@@ -70,9 +97,11 @@ public class WebController implements WebMvcConfigurer {
 
         return "login";
     }
+
     @PostMapping("/login")
     //TODO  VERIF SESSION  + AFFICHAGE DE LA SESSION SUR CONTACT + VERIFIER JOINTURE ENTRE USER ET CONTACT
     public String loginSubmit(HttpSession session,User user) {
+
         session.setAttribute("valueSessionName", user.getLogin());
         session.setAttribute("valueSessionId", user.getId());
         return "redirect:/home";

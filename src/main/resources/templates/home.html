@@ -29,6 +29,12 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/endsession">Deconnexion<span class="sr-only">(current)</span></a>
                 </li>
+                <li class="nav-item">
+                    <div th:switch="${session['valueSessionName']}">
+                        <p th:case="null">None</p>
+                        <p th:case="*" th:utext="${session['valueSessionName']}"><p>
+                    </div>
+                </li>
             </ul>
         </div>
     </nav>
@@ -40,11 +46,14 @@
                      class="row border-bottom"
                      th:classappend="${contact.name} == (${selected} != null ? ${selected.name} : '') ? 'selected' : ''">
                     <a th:href="@{/home(id=${contact.id})}">
-                        <p th:utext="${contact.name}"
-                           class="ml-4 mt-3"
-                           th:classappend="${contact.id} == (${selected} != null ? ${selected.id} : '') ? 'text-white' : 'text-primary'">
-                            Full Name
-                        </p>
+                        <div class="pl-4 ml-4 col-12">
+                            <p th:utext="${contact.name}"
+                               class="ml-4 mt-3"
+                               th:classappend="${contact.id} == (${selected} != null ? ${selected.id} : '') ? 'text-white' : 'text-primary'">
+                                Full Name
+                            </p>
+                        </div>
+
                     </a>
                 </div>
             </div>
