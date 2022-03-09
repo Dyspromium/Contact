@@ -52,14 +52,12 @@
 </nav>
     <section class="mb-4 mt-4">
         <div class="row h-100">
-            <div class="col-6 h-100">
+            <div class="col-4 h-100">
                 <h2 class="ml-4">Contacts</h2>
-                <div th:each="contact, state : ${contacts}"
-                     class="row border-bottom"
-                     th:classappend="${contact.id} == (${selected} != null ? ${selected.id} : '') ? 'selected' : ''">
-                    <a class="text-decoration-none" th:href="@{/home(id=${contact.id})}">
-                        <div class="pl-4 ml-4 col-12">
-                            <img class="rounded-circle mt-2 float-left" alt="100x100" src="https://picsum.photos/40"
+                <div th:each="contact, state : ${contacts}">
+                    <a class="text-decoration-none" th:href="@{/home(id=${contact.id})}" >
+                        <div class="pl-4 row border-bottom ml-4" th:classappend="${contact.id} == (${selected} != null ? ${selected.id} : '') ? 'selected' : ''">
+                            <img class="rounded-circle my-2 float-left" alt="100x100" src="https://picsum.photos/40"
                                  data-holder-rendered="true">
                             <p th:utext="${contact.name}"
                                class="ml-3 mt-3 float-left"
@@ -71,7 +69,7 @@
                     </a>
                 </div>
             </div>
-            <div class="col-6 h-100 border-left px-4">
+            <div class="col-8 h-100 border-left px-4">
                 <div th:switch="${selected}">
                     <p th:case="null">No contact Selected</p>
                     <div th:case="*" class="row">
@@ -84,7 +82,7 @@
                             </div>
                         </div>
 
-                        <div th:switch="${selected.getMail().size()}" class="mt-4 col-6">
+                        <div th:switch="${selected.getMail().size()}" class="mt-4 col-4">
                             <h5 class="ml-4">Mails</h5>
                             <div th:case="0" class="col-12 pl-4">
                                 No Mail
@@ -100,14 +98,14 @@
                             </div>
                             <div class="row col-12 mt-3">
                                 <div class="col-12">
-                                    <form action="/delete" method="GET">
+                                    <form action="/add/mail" method="GET">
                                         <input type="submit" name="action" class="btn btn-info w-100" value="Add Mail" />
                                     </form>
                                 </div>
                             </div>
                         </div>
 
-                        <div th:switch="${selected.getAddresses().size()}" class="mt-4 col-6">
+                        <div th:switch="${selected.getAddresses().size()}" class="mt-4 col-8">
                             <h5 class="ml-4">Address</h5>
                             <div th:case="0" class="col-12 pl-4">
                                 No Address
@@ -123,7 +121,7 @@
                             </div>
                             <div class="row col-12 mt-3">
                                 <div class="col-12">
-                                    <form action="/delete" method="GET">
+                                    <form action="/add/address" method="GET">
                                         <input type="submit" name="action" class="btn btn-info w-100" value="Add Address" />
                                     </form>
                                 </div>

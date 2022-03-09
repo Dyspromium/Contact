@@ -91,16 +91,6 @@ public class WebController implements WebMvcConfigurer {
         }
     }
 
-
-    @RequestMapping(value="/edit", method=RequestMethod.GET)
-    public String edit(@RequestParam String action, Model model) {
-        model.addAttribute("contact", selected);
-        model.addAttribute("address", selected.getAddresses());
-        return "edit";
-    }
-
-
-
     @RequestMapping(value="/delete", method=RequestMethod.GET)
     public String delete(@RequestParam String action, Model m) {
 
@@ -136,6 +126,54 @@ public class WebController implements WebMvcConfigurer {
         }
         return "add";
     }
+
+    @GetMapping("/add/mail")
+    public String addMail(Model model, HttpSession session) {
+        if (session.getAttribute("valueSessionId") == null){
+            return "redirect:/login";
+        } else {
+            selected.setTrymail("");
+            model.addAttribute("selected", selected);
+            return "addMail";
+        }
+    }
+
+    @PostMapping("/add/mail")
+    public String addMailSubmit(@ModelAttribute Contact contact, BindingResult result) {
+        if (Objects.equals(contact.getName(), "")) {
+            return "redirect:/add/mail";
+        }
+        if(contactRepository.findByMail(contact.getTrymail()).isEmpty()){
+            selected.addMail(contact.getTrymail());
+            contactRepository.save(selected);
+            return "redirect:/home";
+        }
+        return "redirect:/add/mail";
+    }
+
+    @GetMapping("/add/address")
+    public String addAddress(Model model, Address address, HttpSession session) {
+        if (session.getAttribute("valueSessionId") == null){
+            return "redirect:/login";
+        } else {
+            model.addAttribute("selected", selected);
+            model.addAttribute("address", address);
+            return "addAddress";
+        }
+    }
+
+    @PostMapping("/add/address")
+    public String addAddressSubmit(@ModelAttribute Address address, BindingResult result) {
+
+        address.setContact(selected);
+        List<Address> test = selected.getAddresses();
+        test.add(address);
+
+        contactRepository.save(selected);
+        return "redirect:/home";
+    }
+
+
 
     @GetMapping("/login")
     public String login(Model model, User user) {
