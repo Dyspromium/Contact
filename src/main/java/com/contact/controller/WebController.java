@@ -69,7 +69,7 @@ public class WebController implements WebMvcConfigurer {
                 selected.deleteMail(mail);
                 contactRepository.save(selected);
             }
-            return "redirect:/home";
+            return "redirect:/" + home(model, selected.getId(),session);
         }
     }
 
@@ -87,7 +87,7 @@ public class WebController implements WebMvcConfigurer {
                     contactRepository.save(selected);
                 }
             }
-            return "redirect:/home";
+            return "redirect:/" + home(model, selected.getId(),session);
         }
     }
 
@@ -122,7 +122,7 @@ public class WebController implements WebMvcConfigurer {
 
             contact.addMail(contact.getTrymail());
             contactRepository.save(contact);
-            return "redirect:/home";
+            return "redirect:/" + home(model, contact.getId(),session);
         }
         return "add";
     }
@@ -146,6 +146,7 @@ public class WebController implements WebMvcConfigurer {
         if(contactRepository.findByMail(contact.getTrymail()).isEmpty()){
             selected.addMail(contact.getTrymail());
             contactRepository.save(selected);
+            selected = contactRepository.findById(selected.getId()).get();
             return "redirect:/home";
         }
         return "redirect:/add/mail";
@@ -170,6 +171,7 @@ public class WebController implements WebMvcConfigurer {
         test.add(address);
 
         contactRepository.save(selected);
+        selected = contactRepository.findById(selected.getId()).get();
         return "redirect:/home";
     }
 

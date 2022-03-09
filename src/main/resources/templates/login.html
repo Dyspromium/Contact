@@ -25,8 +25,8 @@
     <div style="width: 300px;display: flex;justify-content: center;flex-direction: column;">
         <div style="font-size: xx-large;margin-bottom: 20px;display: flex;align-items: center;justify-content: center;"> Connexion </div>
         <form action="#" th:action="@{/login}" th:object="${user}" method="post">
-            <p>Login : <input required class="form-control" type="text" th:field="*{login}"/></p>
-            <p>Password : <input required type="text" class="form-control" th:field="*{password}"/></p>
+            <p>Login  <input required class="form-control" type="text" th:field="*{login}"/></p>
+            <p>Password  <input required type="text" class="form-control" th:field="*{password}"/></p>
             <div style="display: flex; justify-content: flex-end">
                 <button type="reset" class="btn btn-outline-secondary" style="margin-right: 30px">Reset</button>
                 <button type="submit" class="btn btn-outline-success">Submit</button>

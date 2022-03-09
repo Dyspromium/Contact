@@ -16,6 +16,11 @@
     .selected{
         background-color: rgba(243, 240, 243, 0.6);
     }
+
+    .unselected:hover{
+        background-color: rgba(253, 240, 253, 0.6);
+        transition: background-color 300ms;
+    }
 </style>
 <body>
 
@@ -50,14 +55,14 @@
         </ul>
     </div>
 </nav>
-    <section class="mb-4 mt-4">
-        <div class="row h-100">
-            <div class="col-4 h-100">
+    <section class="mb-4">
+        <div class="row h-screen">
+            <div class="col-4 h-100 pt-4">
                 <h2 class="ml-4">Contacts</h2>
                 <div th:each="contact, state : ${contacts}">
                     <a class="text-decoration-none" th:href="@{/home(id=${contact.id})}" >
-                        <div class="pl-4 row border-bottom ml-4" th:classappend="${contact.id} == (${selected} != null ? ${selected.id} : '') ? 'selected' : ''">
-                            <img class="rounded-circle my-2 float-left" alt="100x100" src="https://picsum.photos/40"
+                        <div class="row border-bottom px-4" th:classappend="${contact.id} == (${selected} != null ? ${selected.id} : '') ? 'selected' : 'unselected'">
+                            <img class="rounded-circle float-left my-2" alt="100x100" src="https://picsum.photos/40"
                                  data-holder-rendered="true">
                             <p th:utext="${contact.name}"
                                class="ml-3 mt-3 float-left"
@@ -69,73 +74,67 @@
                     </a>
                 </div>
             </div>
-            <div class="col-8 h-100 border-left px-4">
+            <div style="height:100%;" class="col-8 h-100 border-left h-100 px-4 pt-4">
                 <div th:switch="${selected}">
                     <p th:case="null">No contact Selected</p>
-                    <div th:case="*" class="row">
-                        <div class="col-12 ">
-                            <img class="rounded-circle mt-2 float-left" alt="100x100" src="https://picsum.photos/100"
-                                 data-holder-rendered="true">
-                            <br>
-                            <div class="float-left">
-                                <h2 th:utext="${selected.name}" class="align-middle ml-3 mt-3"></h2>
-                            </div>
-                        </div>
-
-                        <div th:switch="${selected.getMail().size()}" class="mt-4 col-4">
-                            <h5 class="ml-4">Mails</h5>
-                            <div th:case="0" class="col-12 pl-4">
-                                No Mail
-                            </div>
-                            <div th:case="*" class="col-12">
-                                <div th:each="m, state : ${selected.mail}"
-                                     class="row ml-4">
-                                    <span th:text="${m}" class="mt-2"></span>
-                                    <a th:href="@{/delete/mail(mail=${m})}">
-                                        <button class="btn"><i class="fa fa-trash"></i></button>
-                                    </a>
+                    <div th:case="*" class="row mb-4">
+                        <div class="col-12 row">
+                            <div class="col-10">
+                                <img class="rounded-circle mt-2 float-left" alt="100x100" src="https://picsum.photos/100"
+                                     data-holder-rendered="true">
+                                <br>
+                                <div class="float-left">
+                                    <h2 th:utext="${selected.name}" class="align-middle ml-3 mt-3"></h2>
                                 </div>
                             </div>
-                            <div class="row col-12 mt-3">
-                                <div class="col-12">
-                                    <form action="/add/mail" method="GET">
-                                        <input type="submit" name="action" class="btn btn-info w-100" value="Add Mail" />
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div th:switch="${selected.getAddresses().size()}" class="mt-4 col-8">
-                            <h5 class="ml-4">Address</h5>
-                            <div th:case="0" class="col-12 pl-4">
-                                No Address
-                            </div>
-                            <div th:case="*" class="col-12">
-                                <div th:each="a, state : ${selected.addresses}"
-                                     class="row ml-4">
-                                    <span th:text="${a.toString()}" class="mt-2"></span>
-                                    <a th:href="@{/delete/address(id=${a.id})}">
-                                        <button class="btn"><i class="fa fa-trash"></i></button>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="row col-12 mt-3">
-                                <div class="col-12">
-                                    <form action="/add/address" method="GET">
-                                        <input type="submit" name="action" class="btn btn-info w-100" value="Add Address" />
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row col-12 mt-3">
-                            <div class="col-12">
+                            <div class="col">
                                 <form action="/delete" method="GET">
-                                    <input type="submit" name="action" class="btn btn-danger w-100" value="Delete" />
+                                    <input type="submit" name="action" class="btn btn-outline-danger w-100" value="Delete" />
                                 </form>
                             </div>
                         </div>
 
+                        <div th:switch="${selected.getMail().size()}" class="mt-4 col-4 pr-4">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="mt-1">Mails</h5>
+                                <a href="/add/mail">
+                                    <button class="btn btn-outline-info"><i class="fa fa-plus"></i></button>
+                                </a>
+                            </div>
+                            <div th:case="0" class="col-12 pl-4">
+                                No Mail
+                            </div>
+                            <div th:case="*" class="col-12 mt-2 p-0 ">
+                                <div th:each="m, state : ${selected.mail}"
+                                     class="d-flex justify-content-between mb-2">
+                                    <span th:text="${m}" class="mt-2"></span>
+                                    <a th:href="@{/delete/mail(mail=${m})}">
+                                        <button class="btn btn-outline-danger"><i class="fa fa-trash"></i></button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div th:switch="${selected.getAddresses().size()}" class="mt-4 col-8  border-left pr-4">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="mt-1">Address</h5>
+                                <a href="/add/address">
+                                    <button class="btn btn-outline-info"><i class="fa fa-plus"></i></button>
+                                </a>
+                            </div>
+                            <div th:case="0" class="col-12 pl-4">
+                                No Address
+                            </div>
+                            <div th:case="*" class="col-12 mt-2 p-0 ">
+                                <div th:each="a, state : ${selected.addresses}"
+                                     class="d-flex justify-content-between mb-2">
+                                    <span th:text="${a.toString()}" class="mt-2"></span>
+                                    <a th:href="@{/delete/address(id=${a.id})}">
+                                        <button class="btn btn-outline-danger"><i class="fa fa-trash"></i></button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
