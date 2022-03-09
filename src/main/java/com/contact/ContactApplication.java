@@ -14,20 +14,20 @@ public class ContactApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ContactApplication.class, args);
 	}
-
-	@Bean
-	public CommandLineRunner demo(ContactRepository contactRepository, AddressRepository addressRepository) {
-		return (args) -> {
-			// save a few customers
-			Contact c = new Contact("Jack");
-			c.addMail("test@test.mail");
-			contactRepository.save(c);
-
-			Contact c2 = new Contact("Jacque");
-			contactRepository.save(c2);
-
-
-		};
-	}
+//
+//	@Bean
+//	public CommandLineRunner demo(ContactRepository contactRepository, AddressRepository addressRepository) {
+//		return (args) -> {
+//			// save a few customers
+//			Contact c = new Contact("Jack");
+//			c.addMail("test@test.mail");
+//			contactRepository.save(c);
+//
+//			Contact c2 = new Contact("Jacque");
+//			contactRepository.save(c2);
+//
+//
+//		};
+//	}
 
 }
