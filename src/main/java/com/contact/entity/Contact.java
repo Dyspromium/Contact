@@ -53,6 +53,10 @@ public class Contact{
         this.mail.add(mail);
     }
 
+    public void deleteMail(String mail){
+        this.mail.remove(mail);
+    }
+
     public List<Address> getAddresses() {
         return addresses;
     }
@@ -62,5 +66,15 @@ public class Contact{
 
     public void setAddresses(List<Address> addresses) {
         this.addresses = addresses;
+    }
+
+    public void deleteAddress(Address add){
+        for (int i = 0; i<addresses.size(); i++) {
+            if(addresses.get(i).getId() == add.getId()){
+                addresses.remove(i);
+                break;
+            }
+
+        }
     }
 }

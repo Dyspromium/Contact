@@ -9,6 +9,11 @@ public class Address{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
+    public int getId() {
+        return id;
+    }
+
+
     private String street;
     private String city;
     private String country;
