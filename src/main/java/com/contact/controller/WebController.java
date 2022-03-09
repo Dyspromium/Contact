@@ -59,9 +59,43 @@ public class WebController implements WebMvcConfigurer {
         }
     }
 
+    @GetMapping("/delete/mail")
+    public String deleteMail(Model model,String mail, HttpSession session) {
+
+        if (session.getAttribute("valueSessionId") == null){
+            return "redirect:/login";
+        } else {
+            if(mail != null){
+                selected.deleteMail(mail);
+                contactRepository.save(selected);
+            }
+            return "redirect:/home";
+        }
+    }
+
+    @GetMapping("/delete/address")
+    public String deleteMail(Model model,Integer id, HttpSession session) {
+
+        if (session.getAttribute("valueSessionId") == null){
+            return "redirect:/login";
+        } else {
+
+            if(id != null){
+                Optional<Address> add = Optional.ofNullable(addressRepository.findById(id));
+                if(add.isPresent()){
+                    selected.deleteAddress(add.get());
+                    contactRepository.save(selected);
+                }
+            }
+            return "redirect:/home";
+        }
+    }
+
+
     @RequestMapping(value="/edit", method=RequestMethod.GET)
     public String edit(@RequestParam String action, Model model) {
         model.addAttribute("contact", selected);
+        model.addAttribute("address", selected.getAddresses());
         return "edit";
     }
 
@@ -95,7 +129,6 @@ public class WebController implements WebMvcConfigurer {
             address.setContact(contact);
             List<Address> test = contact.getAddresses();
             test.add(address);
-            System.out.println(test);
 
             contact.addMail(contact.getTrymail());
             contactRepository.save(contact);
@@ -103,8 +136,6 @@ public class WebController implements WebMvcConfigurer {
         }
         return "add";
     }
-
-
 
     @GetMapping("/login")
     public String login(Model model, User user) {
