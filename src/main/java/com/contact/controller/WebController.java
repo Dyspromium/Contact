@@ -139,19 +139,18 @@ public class WebController implements WebMvcConfigurer {
 
     @GetMapping("/login")
     public String login(Model model, User user) {
-        //if pas de users
         model.addAttribute("users", user);
-        //sinon vérif connexion
-
         return "login";
     }
 
     @PostMapping("/login")
     //TODO  VERIF SESSION  + AFFICHAGE DE LA SESSION SUR CONTACT + VERIFIER JOINTURE ENTRE USER ET CONTACT
     public String loginSubmit(HttpSession session,User user) {
-
-        session.setAttribute("valueSessionName", user.getLogin());
-        session.setAttribute("valueSessionId", user.getId());
-        return "redirect:/home";
+        if(Objects.equals(user.getLogin(), "admin") && Objects.equals(user.getPassword(), "admin")) {
+            session.setAttribute("valueSessionName", user.getLogin());
+            session.setAttribute("valueSessionId", user.getId());
+            return "redirect:/home";
+        }
+        return "login";
     }
 }

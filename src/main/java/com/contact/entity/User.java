@@ -9,7 +9,7 @@ public class User {
     private int id;
     private String login;
     private String password;
-
+    private int role;
     protected User(){};
 
     public User(String login, String password) {
