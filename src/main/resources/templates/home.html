@@ -8,7 +8,7 @@
 <style>
 
     .selected{
-        background-color: #dfe6e9;
+        background-color: rgba(243, 240, 243, 0.6);
     }
 </style>
 <body>
@@ -44,12 +44,14 @@
                 <h2 class="ml-4">Contacts</h2>
                 <div th:each="contact, state : ${contacts}"
                      class="row border-bottom"
-                     th:classappend="${contact.name} == (${selected} != null ? ${selected.name} : '') ? 'selected' : ''">
-                    <a th:href="@{/home(id=${contact.id})}">
+                     th:classappend="${contact.id} == (${selected} != null ? ${selected.id} : '') ? 'selected' : ''">
+                    <a class="text-decoration-none" th:href="@{/home(id=${contact.id})}">
                         <div class="pl-4 ml-4 col-12">
+                            <img class="rounded-circle mt-2 float-left" alt="100x100" src="https://picsum.photos/40"
+                                 data-holder-rendered="true">
                             <p th:utext="${contact.name}"
-                               class="ml-4 mt-3"
-                               th:classappend="${contact.id} == (${selected} != null ? ${selected.id} : '') ? 'text-white' : 'text-primary'">
+                               class="ml-3 mt-3 float-left"
+                               th:classappend="${contact.id} == (${selected} != null ? ${selected.id} : '') ? 'text-muted' : 'text-dark'">
                                 Full Name
                             </p>
                         </div>
@@ -57,17 +59,59 @@
                     </a>
                 </div>
             </div>
-            <div class="col-6 h-100 border-left">
+            <div class="col-6 h-100 border-left px-4">
                 <div th:switch="${selected}">
                     <p th:case="null">No contact Selected</p>
-                    <div th:case="*">
-                        <h2 th:utext="${selected.name}"></h2>
-                        <form action="{/edit}" method="#">
-                            <input type="submit" name="action" class="btn-info" value="Modifier" />
-                        </form>
-                        <form action="/delete" method="GET">
-                            <input type="submit" name="action" class="btn btn-danger" value="Delete" />
-                        </form>
+                    <div th:case="*" class="row">
+                        <div class="col-12 ">
+                            <img class="rounded-circle mt-2 float-left" alt="100x100" src="https://picsum.photos/100"
+                                 data-holder-rendered="true">
+                            <br>
+                            <div class="float-left">
+                                <h2 th:utext="${selected.name}" class="align-middle ml-3 mt-3"></h2>
+                            </div>
+                        </div>
+
+                        <div th:switch="${selected.getMail().size()}" class="mt-4 col-6">
+                            <h5 class="ml-4">Mails</h5>
+                            <div th:case="0" class="col-12 pl-4">
+                                No Mail
+                            </div>
+                            <div th:case="*" class="col-12">
+
+                                <div th:each="m, state : ${selected.mail}"
+                                     class="row ml-4"
+                                     th:text="${m}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div th:switch="${selected.getAddresses().size()}" class="mt-4 col-6">
+                            <h5 class="ml-4">Address</h5>
+                            <div th:case="0" class="col-12 pl-4">
+                                No Address
+                            </div>
+                            <div th:case="*" class="col-12">
+                                <div th:each="a, state : ${selected.addresses}"
+                                     class="row ml-4"
+                                     th:text="${a.toString()}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row col-12 mt-3">
+                            <div class="col-6">
+                                <form action="/edit" method="GET">
+                                    <input type="submit" name="action" class="btn btn-info w-100" value="Edit" />
+                                </form>
+                            </div>
+                            <div class="col-6">
+                                <form action="/delete" method="GET">
+                                    <input type="submit" name="action" class="btn btn-danger w-100" value="Delete" />
+                                </form>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>

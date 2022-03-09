@@ -3,6 +3,7 @@ package com.contact.entity;
 import javax.persistence.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -40,10 +41,26 @@ public class Contact{
         return trymail;
     }
 
-    public void addMail(String mail){this.mail.add(mail);}
+    public void setTrymail(String trymail) {
+        this.trymail = trymail;
+    }
 
+    public List<String> getMail() {
+        return mail;
+    }
 
-    @ManyToMany
-    private Collection<Address> addresses;
+    public void addMail(String mail){
+        this.mail.add(mail);
+    }
 
+    public List<Address> getAddresses() {
+        return addresses;
+    }
+
+    @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Address> addresses = new ArrayList<>();
+
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
+    }
 }
