@@ -45,6 +45,8 @@ public class WebController implements WebMvcConfigurer {
     public String home(Model model, Long id, HttpSession session) {
 
         if (session.getAttribute("valueSessionId") == null) {
+            System.out.println("SESSION" + session);
+            System.out.println("Session Id" + session.getAttribute("valueSessionId"));
             return "redirect:/login";
         } else {
             Iterable<Contact> all = contactRepository.findAll();
@@ -177,6 +179,12 @@ public class WebController implements WebMvcConfigurer {
         return "redirect:/home";
     }
 
+    @PostMapping("/deleteAllUser")
+    public String deleteAllUser() {
+        userRepository.deleteAll();
+        return "redirect:/adminPanel";
+    }
+
 
     @GetMapping("/login")
     public String login(Model model, User user) {
@@ -186,36 +194,62 @@ public class WebController implements WebMvcConfigurer {
 
     @PostMapping("/login")
     //TODO  VERIF SESSION  + AFFICHAGE DE LA SESSION SUR CONTACT + VERIFIER JOINTURE ENTRE USER ET CONTACT
-    public String loginSubmit(HttpSession session, User user) {
+    public String loginSubmit(User user, HttpSession session) {
+
         if (Objects.equals(user.getLogin(), "admin") && Objects.equals(user.getPassword(), "admin")) {
             session.setAttribute("valueSessionName", user.getLogin());
             session.setAttribute("valueSessionId", user.getId());
             session.setAttribute("role", "admin");
+            Model model = null;
             return "redirect:/home";
-        } else {
-            if (!userRepository.findById(user.getId()).isPresent()) {
+        } else if (userRepository.findUserByLogin(user.getLogin()) != null) {
+            User dbUser = userRepository.findUserByLogin(user.getLogin());
+            System.out.println("dbUser login " + dbUser.getLogin());
+            System.out.println("dbUser password " + dbUser.getPassword());
+
+            System.out.println("User password " + user.getPassword());
+            System.out.println("User password " + user.getPassword());
+
+
+            if (Objects.equals(dbUser.getLogin(), user.getLogin()) && Objects.equals(user.getPassword(), dbUser.getPassword())) {
+                System.out.println("J'ai id " + user.getId());
+                System.out.println("J'ai user : " + userRepository.findUserByLogin(user.getLogin()).getLogin());
                 session.setAttribute("valueSessionName", user.getLogin());
                 session.setAttribute("valueSessionId", user.getId());
+                System.out.println("login :" + user.getLogin());
+                System.out.println("password : " + user.getPassword());
                 return "redirect:/home";
+            } else {
+                return "redirect:/login";
             }
+        } else {
+            return "redirect:/login";
         }
-        return "login";
+
     }
 
-    @GetMapping("/adminPanel")
-    public String adminPanel(Model model, User user) {
 
-        return "adminPanel";
+    @GetMapping("/adminPanel")
+    public String adminPanel(Model model, User user, HttpSession session) {
+        if (session.getAttribute("valueSessionId") == null) {
+            return "redirect:/login";
+        } else {
+            System.out.println("Session :" + session.getAttribute("valueSessionId"));
+            model.addAttribute("user", user);
+            return "/adminPanel";
+        }
     }
 
     @PostMapping("/adminPanel")
-    public String adminSubmit(HttpSession session, User user) {
-        if (!userRepository.findById(user.getId()).isPresent()) {
+    public String adminSubmit(Model model, User user) {
+
+
+        if (userRepository.findUserByLogin(user.getLogin()) == null) {
             userRepository.save(user);
-            return "adminPanel";
+            return "/adminPanel";
         } else {
             return "redirect:/error";
         }
-
     }
+
 }
