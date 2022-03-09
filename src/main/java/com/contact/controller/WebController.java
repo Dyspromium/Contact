@@ -5,6 +5,7 @@ import com.contact.repository.AddressRepository;
 import com.contact.repository.ContactRepository;
 import com.contact.entity.Contact;
 import com.contact.entity.User;
+import com.contact.repository.UserRepository;
 import com.sun.jdi.event.ExceptionEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,8 +29,11 @@ public class WebController implements WebMvcConfigurer {
     @Autowired
     private AddressRepository addressRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @RequestMapping("/endsession")
-    public String endSession(HttpSession session){
+    public String endSession(HttpSession session) {
         session.invalidate();
         return "redirect:/home";
     }
@@ -38,18 +42,18 @@ public class WebController implements WebMvcConfigurer {
     Contact selected;
 
     @GetMapping("/home")
-    public String home(Model model,Long id, HttpSession session) {
+    public String home(Model model, Long id, HttpSession session) {
 
-        if (session.getAttribute("valueSessionId") == null){
+        if (session.getAttribute("valueSessionId") == null) {
             return "redirect:/login";
         } else {
             Iterable<Contact> all = contactRepository.findAll();
             model.addAttribute("contacts", all);
 
-            if(id != null){
-                if(contactRepository.findById(id).isEmpty()){
+            if (id != null) {
+                if (contactRepository.findById(id).isEmpty()) {
                     selected = null;
-                }else{
+                } else {
                     selected = contactRepository.findById(id).get();
                 }
             }
@@ -60,12 +64,12 @@ public class WebController implements WebMvcConfigurer {
     }
 
     @GetMapping("/delete/mail")
-    public String deleteMail(Model model,String mail, HttpSession session) {
+    public String deleteMail(Model model, String mail, HttpSession session) {
 
-        if (session.getAttribute("valueSessionId") == null){
+        if (session.getAttribute("valueSessionId") == null) {
             return "redirect:/login";
         } else {
-            if(mail != null){
+            if (mail != null) {
                 selected.deleteMail(mail);
                 contactRepository.save(selected);
             }
@@ -74,15 +78,15 @@ public class WebController implements WebMvcConfigurer {
     }
 
     @GetMapping("/delete/address")
-    public String deleteMail(Model model,Integer id, HttpSession session) {
+    public String deleteMail(Model model, Integer id, HttpSession session) {
 
-        if (session.getAttribute("valueSessionId") == null){
+        if (session.getAttribute("valueSessionId") == null) {
             return "redirect:/login";
         } else {
 
-            if(id != null){
+            if (id != null) {
                 Optional<Address> add = Optional.ofNullable(addressRepository.findById(id));
-                if(add.isPresent()){
+                if (add.isPresent()) {
                     selected.deleteAddress(add.get());
                     contactRepository.save(selected);
                 }
@@ -91,7 +95,7 @@ public class WebController implements WebMvcConfigurer {
         }
     }
 
-    @RequestMapping(value="/delete", method=RequestMethod.GET)
+    @RequestMapping(value = "/delete", method = RequestMethod.GET)
     public String delete(@RequestParam String action, Model m) {
 
         contactRepository.deleteById(selected.getId());
@@ -101,7 +105,7 @@ public class WebController implements WebMvcConfigurer {
 
     @GetMapping("/add")
     public String add(Model model, Contact contact, Address address, HttpSession session) {
-        if (session.getAttribute("valueSessionId") == null){
+        if (session.getAttribute("valueSessionId") == null) {
             return "redirect:/login";
         } else {
             model.addAttribute("contact", contact);
@@ -115,7 +119,7 @@ public class WebController implements WebMvcConfigurer {
         if (Objects.equals(contact.getName(), "")) {
             return "add";
         }
-        if(contactRepository.findByMail(contact.getTrymail()).isEmpty()){
+        if (contactRepository.findByMail(contact.getTrymail()).isEmpty()) {
             address.setContact(contact);
             List<Address> test = contact.getAddresses();
             test.add(address);
@@ -129,7 +133,7 @@ public class WebController implements WebMvcConfigurer {
 
     @GetMapping("/add/mail")
     public String addMail(Model model, HttpSession session) {
-        if (session.getAttribute("valueSessionId") == null){
+        if (session.getAttribute("valueSessionId") == null) {
             return "redirect:/login";
         } else {
             selected.setTrymail("");
@@ -143,7 +147,7 @@ public class WebController implements WebMvcConfigurer {
         if (Objects.equals(contact.getName(), "")) {
             return "redirect:/add/mail";
         }
-        if(contactRepository.findByMail(contact.getTrymail()).isEmpty()){
+        if (contactRepository.findByMail(contact.getTrymail()).isEmpty()) {
             selected.addMail(contact.getTrymail());
             contactRepository.save(selected);
             return "redirect:/home";
@@ -153,7 +157,7 @@ public class WebController implements WebMvcConfigurer {
 
     @GetMapping("/add/address")
     public String addAddress(Model model, Address address, HttpSession session) {
-        if (session.getAttribute("valueSessionId") == null){
+        if (session.getAttribute("valueSessionId") == null) {
             return "redirect:/login";
         } else {
             model.addAttribute("selected", selected);
@@ -174,7 +178,6 @@ public class WebController implements WebMvcConfigurer {
     }
 
 
-
     @GetMapping("/login")
     public String login(Model model, User user) {
         model.addAttribute("users", user);
@@ -183,12 +186,36 @@ public class WebController implements WebMvcConfigurer {
 
     @PostMapping("/login")
     //TODO  VERIF SESSION  + AFFICHAGE DE LA SESSION SUR CONTACT + VERIFIER JOINTURE ENTRE USER ET CONTACT
-    public String loginSubmit(HttpSession session,User user) {
-        if(Objects.equals(user.getLogin(), "admin") && Objects.equals(user.getPassword(), "admin")) {
+    public String loginSubmit(HttpSession session, User user) {
+        if (Objects.equals(user.getLogin(), "admin") && Objects.equals(user.getPassword(), "admin")) {
             session.setAttribute("valueSessionName", user.getLogin());
             session.setAttribute("valueSessionId", user.getId());
+            session.setAttribute("role", "admin");
             return "redirect:/home";
+        } else {
+            if (!userRepository.findById(user.getId()).isPresent()) {
+                session.setAttribute("valueSessionName", user.getLogin());
+                session.setAttribute("valueSessionId", user.getId());
+                return "redirect:/home";
+            }
         }
         return "login";
+    }
+
+    @GetMapping("/adminPanel")
+    public String adminPanel(Model model, User user) {
+
+        return "adminPanel";
+    }
+
+    @PostMapping("/adminPanel")
+    public String adminSubmit(HttpSession session, User user) {
+        if (!userRepository.findById(user.getId()).isPresent()) {
+            userRepository.save(user);
+            return "adminPanel";
+        } else {
+            return "redirect:/error";
+        }
+
     }
 }

@@ -15,16 +15,17 @@
     }
 </style>
 <body>
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div style="display: flex;justify-content: flex-start;align-content: center">
-    <img src="https://zupimages.net/up/22/10/etfe.png" alt="Avatar" class="avatar">
-    <a class="navbar-brand" href="#">Contact Piclos</a>
+        <img src="https://zupimages.net/up/22/10/etfe.png" alt="Avatar" class="avatar">
+        <a class="navbar-brand" href="#">Contact Piclos</a>
     </div>
 </nav>
 
 <div style="display:flex;justify-content: center;align-content: center;margin-top: 50px">
     <div style="width: 300px;display: flex;justify-content: center;flex-direction: column;">
-        <div style="font-size: xx-large;margin-bottom: 20px;display: flex;align-items: center;justify-content: center;"> Connexion </div>
+        <div style="font-size: xx-large;margin-bottom: 20px;display: flex;align-items: center;justify-content: center;">Création d'utilisateur </div>
         <form action="#" th:action="@{/login}" th:object="${user}" method="post">
             <p>Login : <input required class="form-control" type="text" th:field="*{login}"/></p>
             <p>Password : <input required type="text" class="form-control" th:field="*{password}"/></p>
@@ -35,5 +36,6 @@
         </form>
     </div>
 </div>
+
 </body>
 </html>

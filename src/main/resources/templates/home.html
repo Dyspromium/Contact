@@ -33,6 +33,10 @@
             <li class="nav-item">
                 <a class="nav-link" href="/add">Add Contact <span class="sr-only">(current)</span></a>
             </li>
+            <li th:switch="${session['role']}" class="nav-item">
+                <a th:case="null">None</a>
+                <a th:case="admin" href="/adminPanel">Panel Admin</a>
+            </li>
 
         </ul>
         <ul class="navbar-nav">
