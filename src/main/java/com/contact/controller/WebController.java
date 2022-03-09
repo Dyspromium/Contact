@@ -96,7 +96,6 @@ public class WebController implements WebMvcConfigurer {
             List<Address> test = contact.getAddresses();
             test.add(address);
             System.out.println(test);
-
             contact.addMail(contact.getTrymail());
             contactRepository.save(contact);
             return "redirect:/home";
