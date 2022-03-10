@@ -51,11 +51,11 @@ public class WebController implements WebMvcConfigurer {
     public String home(Model model, Long id, HttpSession session) {
 
         if (session.getAttribute("valueSessionId") == null) {
-            System.out.println("SESSION" + session);
-            System.out.println("Session Id" + session.getAttribute("valueSessionId"));
             return "redirect:/login";
         } else {
-            Iterable<Contact> all = contactRepository.findAll();
+            Iterable<Contact> all = contactRepository.findByUserId((Long) session.getAttribute("valueSessionId"));
+            all.forEach(contact -> System.out.println(contact.getUser()));
+
             model.addAttribute("contacts", all);
 
             if (id != null) {
@@ -133,6 +133,13 @@ public class WebController implements WebMvcConfigurer {
             test.add(address);
 
             contact.addMail(contact.getTrymail());
+            Optional<User> user = userRepository.findById((Long) session.getAttribute("valueSessionId"));
+
+            if(user.isPresent()){
+                contact.setUser(user.get());
+                List<Contact> contacts = user.get().getContact();
+                contacts.add(contact);
+            }
             contactRepository.save(contact);
             return "redirect:/" + home(model, contact.getId(),session);
         }
@@ -201,31 +208,18 @@ public class WebController implements WebMvcConfigurer {
     }
 
     @PostMapping("/login")
-    //TODO  VERIF SESSION  + AFFICHAGE DE LA SESSION SUR CONTACT + VERIFIER JOINTURE ENTRE USER ET CONTACT
     public String loginSubmit(User user, HttpSession session) {
-
         if (Objects.equals(user.getLogin(), "admin") && Objects.equals(user.getPassword(), "admin")) {
             session.setAttribute("valueSessionName", user.getLogin());
             session.setAttribute("valueSessionId", user.getId());
             session.setAttribute("role", "admin");
-            Model model = null;
             return "redirect:/home";
         } else if (userRepository.findUserByLogin(user.getLogin()) != null) {
             User dbUser = userRepository.findUserByLogin(user.getLogin());
-            System.out.println("dbUser login " + dbUser.getLogin());
-            System.out.println("dbUser password " + dbUser.getPassword());
-
-            System.out.println("User password " + user.getPassword());
-            System.out.println("User password " + user.getPassword());
-
 
             if (Objects.equals(dbUser.getLogin(), user.getLogin()) && Objects.equals(user.getPassword(), dbUser.getPassword())) {
-                System.out.println("J'ai id " + user.getId());
-                System.out.println("J'ai user : " + userRepository.findUserByLogin(user.getLogin()).getLogin());
-                session.setAttribute("valueSessionName", user.getLogin());
-                session.setAttribute("valueSessionId", user.getId());
-                System.out.println("login :" + user.getLogin());
-                System.out.println("password : " + user.getPassword());
+                session.setAttribute("valueSessionName", dbUser.getLogin());
+                session.setAttribute("valueSessionId", dbUser.getId());
                 return "redirect:/home";
             } else {
                 return "redirect:/login";

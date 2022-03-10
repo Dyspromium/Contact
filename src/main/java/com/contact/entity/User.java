@@ -9,14 +9,12 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private long id;
     private String login;
     private String password;
 
     public User() {
     }
-
-    ;
 
     public User(String login, String password) {
         this.login = login;
@@ -50,5 +48,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Contact> contact = new ArrayList<>();
+
+    public List<Contact> getContact() {
+        return contact;
+    }
 
 }
