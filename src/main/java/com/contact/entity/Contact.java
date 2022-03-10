@@ -1,6 +1,7 @@
 package com.contact.entity;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,10 +9,14 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
+@XmlRootElement
+@Table(name = "contact")
 public class Contact{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+
+    @Column(name = "name")
     private String name;
     private String trymail;
 

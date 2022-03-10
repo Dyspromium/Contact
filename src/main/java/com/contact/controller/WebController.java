@@ -5,16 +5,16 @@ import com.contact.repository.AddressRepository;
 import com.contact.repository.ContactRepository;
 import com.contact.entity.Contact;
 import com.contact.entity.User;
-import com.sun.jdi.event.ExceptionEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import javax.servlet.http.HttpSession;
 
@@ -31,6 +31,11 @@ public class WebController implements WebMvcConfigurer {
     @RequestMapping("/endsession")
     public String endSession(HttpSession session){
         session.invalidate();
+        return "redirect:/home";
+    }
+
+    @RequestMapping(value = "/")
+    public String index() {
         return "redirect:/home";
     }
 
