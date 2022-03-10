@@ -69,7 +69,7 @@
                         </form>
                     </div>
                 </div>
-                <div th:switch="${messageError}" >
+                <div class="col-4 offset-4 mt-4" th:switch="${messageError}" >
                     <p th:case="null"></p>
                     <p th:case="*" th:text="${messageError}" ></p>
                 </div>

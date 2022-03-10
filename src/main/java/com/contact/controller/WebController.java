@@ -121,6 +121,7 @@ public class WebController implements WebMvcConfigurer {
         } else {
             model.addAttribute("contact", contact);
             model.addAttribute("address", address);
+
             return "add";
         }
     }
@@ -128,8 +129,11 @@ public class WebController implements WebMvcConfigurer {
     @PostMapping("/add")
     public String addSubmit(@ModelAttribute Contact contact, @ModelAttribute Address address, BindingResult result, Model model, HttpSession session) {
         if (Objects.equals(contact.getName(), "")) {
+            messageError = "Nom nul !";
+            model.addAttribute("messageError", messageError);
             return "add";
         }
+
         if (contactRepository.findByMail(contact.getTrymail()).isEmpty()) {
             address.setContact(contact);
             List<Address> test = contact.getAddresses();
@@ -144,27 +148,31 @@ public class WebController implements WebMvcConfigurer {
                 contacts.add(contact);
             }
             contactRepository.save(contact);
+            messageError = "";
             return "redirect:/" + home(model, contact.getId(),session);
         }
+        messageError = "Mail déjà utilisé !";
+        model.addAttribute("messageError", messageError);
         return "add";
     }
 
     @GetMapping("/add/mail")
     public String addMail(Model model, HttpSession session) {
         if (session.getAttribute("valueSessionId") == null) {
+            messageError = "";
             return "redirect:/login";
         } else {
             selected.setTrymail("");
             messageError = "Email already used";
+            model.addAttribute("messageError", messageError);
             model.addAttribute("selected", selected);
             return "addMail";
         }
     }
 
     @PostMapping("/add/mail")
-    public String addMailSubmit(@ModelAttribute Contact contact, BindingResult result) {
+    public String addMailSubmit(@ModelAttribute Contact contact, BindingResult result,Model model) {
         if (Objects.equals(contact.getName(), "")) {
-
             model.addAttribute("messageError", messageError);
             return "redirect:/add/mail";
         }
@@ -218,13 +226,13 @@ public class WebController implements WebMvcConfigurer {
 
     @PostMapping("/login")
     //TODO  VERIF SESSION  + AFFICHAGE DE LA SESSION SUR CONTACT + VERIFIER JOINTURE ENTRE USER ET CONTACT
-    public String loginSubmit(User user, HttpSession session) {
-
+    public String loginSubmit(User user, HttpSession session,Model model) {
+        messageError = "Invalid Credential";
         if (Objects.equals(user.getLogin(), "admin") && Objects.equals(user.getPassword(), "admin")) {
             session.setAttribute("valueSessionName", user.getLogin());
             session.setAttribute("valueSessionId", user.getId());
             session.setAttribute("role", "admin");
-            Model model = null;
+            messageError = "";
             return "redirect:/home";
         } else if (userRepository.findUserByLogin(user.getLogin()) != null) {
             User dbUser = userRepository.findUserByLogin(user.getLogin());
@@ -232,11 +240,15 @@ public class WebController implements WebMvcConfigurer {
             if (Objects.equals(dbUser.getLogin(), user.getLogin()) && Objects.equals(user.getPassword(), dbUser.getPassword())) {
                 session.setAttribute("valueSessionName", dbUser.getLogin());
                 session.setAttribute("valueSessionId", dbUser.getId());
+                messageError = "";
                 return "redirect:/home";
             } else {
+                model.addAttribute("messageError", messageError);
+
                 return "redirect:/login";
             }
         } else {
+            model.addAttribute("messageError", messageError);
             return "redirect:/login";
         }
 
@@ -246,10 +258,12 @@ public class WebController implements WebMvcConfigurer {
     @GetMapping("/adminPanel")
     public String adminPanel(Model model, User user, HttpSession session) {
         if (session.getAttribute("valueSessionId") == null) {
+            messageError = "";
             return "redirect:/login";
         } else {
             System.out.println("Session :" + session.getAttribute("valueSessionId"));
             model.addAttribute("user", user);
+
             return "/adminPanel";
         }
     }
@@ -262,9 +276,11 @@ public class WebController implements WebMvcConfigurer {
             userRepository.save(user);
             messageError = "Utilisateur ajouté !";
             model.addAttribute("messageError", messageError);
-            return "/adminPanel";
+            return "/home";
         } else {
-            return "redirect:/error";
+            messageError = "Utilisateur existant !";
+            model.addAttribute("messageError", messageError);
+            return "/adminPanel";
         }
     }
 

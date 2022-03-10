@@ -82,6 +82,10 @@
                             <button type="submit" class="btn btn-primary w-100">Create</button>
                         </form>
                     </div>
+                    <div  class="col-4 offset-4 mt-4" th:switch="${messageError}" >
+                        <p th:case="null"></p>
+                        <p th:case="*" th:text="${messageError}" ></p>
+                    </div>
                 </div>
 
             </div>
