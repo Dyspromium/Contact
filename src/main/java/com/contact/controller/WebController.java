@@ -51,12 +51,14 @@ public class WebController implements WebMvcConfigurer {
     @GetMapping("/home")
     public String home(Model model, Long id, HttpSession session) {
 
-        if (session.getAttribute("valueSessionName") == null) {
+        if (session.getAttribute("valueSessionId") == null) {
             System.out.println("SESSION" + session);
             System.out.println("Session Id" + session.getAttribute("valueSessionId"));
             return "redirect:/login";
         } else {
-            Iterable<Contact> all = contactRepository.findAll();
+            Iterable<Contact> all = contactRepository.findByUserId((Long) session.getAttribute("valueSessionId"));
+            all.forEach(contact -> System.out.println(contact.getUser()));
+
             model.addAttribute("contacts", all);
 
             if (id != null) {
@@ -75,21 +77,21 @@ public class WebController implements WebMvcConfigurer {
     @GetMapping("/delete/mail")
     public String deleteMail(Model model, String mail, HttpSession session) {
 
-        if (session.getAttribute("valueSessionName") == null) {
+        if (session.getAttribute("valueSessionId") == null) {
             return "redirect:/login";
         } else {
             if (mail != null) {
                 selected.deleteMail(mail);
                 contactRepository.save(selected);
             }
-            return "redirect:/" + home(model, selected.getId(), session);
+            return "redirect:/" + home(model, selected.getId(),session);
         }
     }
 
     @GetMapping("/delete/address")
     public String deleteMail(Model model, Integer id, HttpSession session) {
 
-        if (session.getAttribute("valueSessionName") == null) {
+        if (session.getAttribute("valueSessionId") == null) {
             return "redirect:/login";
         } else {
 
@@ -100,7 +102,7 @@ public class WebController implements WebMvcConfigurer {
                     contactRepository.save(selected);
                 }
             }
-            return "redirect:/" + home(model, selected.getId(), session);
+            return "redirect:/" + home(model, selected.getId(),session);
         }
     }
 
@@ -114,7 +116,7 @@ public class WebController implements WebMvcConfigurer {
 
     @GetMapping("/add")
     public String add(Model model, Contact contact, Address address, HttpSession session) {
-        if (session.getAttribute("valueSessionName") == null) {
+        if (session.getAttribute("valueSessionId") == null) {
             return "redirect:/login";
         } else {
             model.addAttribute("contact", contact);
@@ -134,15 +136,22 @@ public class WebController implements WebMvcConfigurer {
             test.add(address);
 
             contact.addMail(contact.getTrymail());
+            Optional<User> user = userRepository.findById((Long) session.getAttribute("valueSessionId"));
+
+            if(user.isPresent()){
+                contact.setUser(user.get());
+                List<Contact> contacts = user.get().getContact();
+                contacts.add(contact);
+            }
             contactRepository.save(contact);
-            return "redirect:/" + home(model, contact.getId(), session);
+            return "redirect:/" + home(model, contact.getId(),session);
         }
         return "add";
     }
 
     @GetMapping("/add/mail")
     public String addMail(Model model, HttpSession session) {
-        if (session.getAttribute("valueSessionName") == null) {
+        if (session.getAttribute("valueSessionId") == null) {
             return "redirect:/login";
         } else {
             selected.setTrymail("");
@@ -153,7 +162,7 @@ public class WebController implements WebMvcConfigurer {
     }
 
     @PostMapping("/add/mail")
-    public String addMailSubmit(@ModelAttribute Contact contact, BindingResult result,Model model) {
+    public String addMailSubmit(@ModelAttribute Contact contact, BindingResult result) {
         if (Objects.equals(contact.getName(), "")) {
 
             model.addAttribute("messageError", messageError);
@@ -172,7 +181,7 @@ public class WebController implements WebMvcConfigurer {
 
     @GetMapping("/add/address")
     public String addAddress(Model model, Address address, HttpSession session) {
-        if (session.getAttribute("valueSessionName") == null) {
+        if (session.getAttribute("valueSessionId") == null) {
             return "redirect:/login";
         } else {
             model.addAttribute("selected", selected);
@@ -202,7 +211,6 @@ public class WebController implements WebMvcConfigurer {
 
     @GetMapping("/login")
     public String login(Model model, User user) {
-
         model.addAttribute("users", user);
         model.addAttribute("messageError", messageError);
         return "login";
@@ -214,27 +222,21 @@ public class WebController implements WebMvcConfigurer {
 
         if (Objects.equals(user.getLogin(), "admin") && Objects.equals(user.getPassword(), "admin")) {
             session.setAttribute("valueSessionName", user.getLogin());
-            session.setAttribute("valueSessionId", 0);
+            session.setAttribute("valueSessionId", user.getId());
             session.setAttribute("role", "admin");
+            Model model = null;
             return "redirect:/home";
         } else if (userRepository.findUserByLogin(user.getLogin()) != null) {
             User dbUser = userRepository.findUserByLogin(user.getLogin());
-            System.out.println("dbUser login " + dbUser.getLogin());
-            System.out.println("dbUser password " + dbUser.getPassword());
-            System.out.println("User password " + user.getPassword());
-            System.out.println("User password " + user.getPassword());
+
             if (Objects.equals(dbUser.getLogin(), user.getLogin()) && Objects.equals(user.getPassword(), dbUser.getPassword())) {
-                System.out.println("J'ai user : " + userRepository.findUserByLogin(user.getLogin()).getLogin());
-                session.setAttribute("valueSessionName", user.getLogin());
-                System.out.println("login :" + user.getLogin());
-                System.out.println("password : " + user.getPassword());
+                session.setAttribute("valueSessionName", dbUser.getLogin());
+                session.setAttribute("valueSessionId", dbUser.getId());
                 return "redirect:/home";
             } else {
-                messageError = "Invalid Credential";
                 return "redirect:/login";
             }
         } else {
-            messageError = "Invalid Credential";
             return "redirect:/login";
         }
 
@@ -243,7 +245,7 @@ public class WebController implements WebMvcConfigurer {
 
     @GetMapping("/adminPanel")
     public String adminPanel(Model model, User user, HttpSession session) {
-        if (session.getAttribute("valueSessionName") == null) {
+        if (session.getAttribute("valueSessionId") == null) {
             return "redirect:/login";
         } else {
             System.out.println("Session :" + session.getAttribute("valueSessionId"));
@@ -262,9 +264,7 @@ public class WebController implements WebMvcConfigurer {
             model.addAttribute("messageError", messageError);
             return "/adminPanel";
         } else {
-            messageError = "Utilisateur existant !";
-            model.addAttribute("messageError", messageError);
-            return "/adminPanel";
+            return "redirect:/error";
         }
     }
 
