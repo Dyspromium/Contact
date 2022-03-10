@@ -18,6 +18,10 @@ public class Contact{
     @ElementCollection
     private List<String> mail;
 
+    @ManyToOne
+    @JoinColumn(name = "user_ID")
+    private User user;
+
     protected Contact() {}
 
     public Contact(String name) {
@@ -63,6 +67,14 @@ public class Contact{
 
     @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public void setAddresses(List<Address> addresses) {
         this.addresses = addresses;
