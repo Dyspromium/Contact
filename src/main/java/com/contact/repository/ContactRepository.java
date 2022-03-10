@@ -13,9 +13,6 @@ import java.util.List;
 public interface ContactRepository extends CrudRepository<Contact, Long>, JpaSpecificationExecutor<Contact> {
     public List<Contact> findByNameLike(String name);
 
-    @Query("select c from Contact c WHERE :id = c.user.id")
-    List<Contact> findByUserId(@Param("id") long id);
-
     @Query("select c from Contact c WHERE :mail in elements(c.mail)")
     List<Contact> findByMail(@Param("mail") String mail);
 
