@@ -36,6 +36,7 @@ public class WebController implements WebMvcConfigurer {
     @RequestMapping("/endsession")
     public String endSession(HttpSession session) {
         session.invalidate();
+        selected = null;
         return "redirect:/home";
     }
 
