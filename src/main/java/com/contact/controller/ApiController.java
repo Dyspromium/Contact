@@ -35,4 +35,11 @@ public class ApiController implements WebMvcConfigurer {
     public List<Contact> getAllContacts()  {
         return (List<Contact>) contactRepository.findAll();
     }
+
+    @PostMapping("/create")
+    public String createTutorial(@RequestBody Contact contact) {
+        contactRepository.save(new Contact(contact.getName()));
+        return "redirect:/home";
+
+    }
 }
