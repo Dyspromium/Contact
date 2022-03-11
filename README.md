@@ -11,7 +11,7 @@ Navigation :
 ----------
 Api :
 - /api/ -> List all contact
-- /api/{contact id} -> detail contact
+- /api/get/{contact id} -> detail contact
 - /api/delete/{contact id} -> delete contact
 ----------
 # Specification : 
