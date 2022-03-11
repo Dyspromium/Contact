@@ -54,6 +54,14 @@ public class Contact{
         return mail;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setMail(List<String> mail) {
+        this.mail = mail;
+    }
+
     public void addMail(String mail){
         this.mail.add(mail);
     }

@@ -1,10 +1,13 @@
 package com.contact.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@JsonIgnoreProperties(value = {"contact"})
 @Entity
 public class User {
     @Id
