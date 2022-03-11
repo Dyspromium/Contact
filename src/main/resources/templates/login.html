@@ -32,6 +32,10 @@
                 <button type="submit" class="btn btn-outline-success">Submit</button>
             </div>
         </form>
+        <div th:switch="${messageError}" >
+            <p th:case="null"></p>
+            <p th:case="*" th:text="${messageError}" ></p>
+        </div>
     </div>
 </div>
 </body>

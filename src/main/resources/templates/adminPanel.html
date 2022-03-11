@@ -64,6 +64,7 @@
                 <button type="submit" class="btn btn-outline-success">Submit</button>
             </div>
         </form>
+
     </div>
     <div style="width: 300px;display: flex;justify-content: flex-start;flex-direction: column;margin: 100px">
         <div style="font-size: xx-large;margin-bottom: 20px;display: flex;align-items: center;justify-content: center;width: max-content">Supprimer tout les utilisateur</div>
@@ -72,7 +73,10 @@
         </a>
     </div>
 
-</div>
 
+</div> <div class="col-4 offset-4 mt-4" th:switch="${messageError}" >
+    <p th:case="null"></p>
+    <p th:case="*" th:text="${messageError}" ></p>
+</div>
 </body>
 </html>
