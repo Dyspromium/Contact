@@ -10,7 +10,7 @@ Navigation :
 - You can add a contact and manage it (Be careful an admin can't add a contact)
 ----------
 Api :
-- /api/ -> List all contact
+- /api/get/all -> List all contact
 - /api/get/{contact id} -> detail contact
 - /api/delete/{contact id} -> delete contact
 ----------
