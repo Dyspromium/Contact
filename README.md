@@ -10,8 +10,10 @@ Navigation :
 - You can add a contact and manage it (Be careful an admin can't add a contact)
 ----------
 Api :
-
-
+- /api/ -> List all contact
+- /api/{contact id} -> detail contact
+- /api/delete/{contact id} -> delete contact
+----------
 # Specification : 
 - Login can't be duplicate
 - A contact can't have duplicate e-mail
