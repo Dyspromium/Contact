@@ -3,6 +3,9 @@
 Project developped by Dyspromium & unsigned-picard.
 ## Manual :
 ----------
+- v_login_dynamic_api_xml -> All the features requested for the project
+- v_login_static_no_xml -> Only mandatory features
+----------
 Navigation :
 - Connect admin's account : Login -> "admin" / Password -> "admin"
 - Go to "Panel Admin" and create a new user
@@ -13,6 +16,7 @@ Api :
 - /api/get/all -> List all contact
 - /api/get/{contact id} -> detail contact
 - /api/delete/{contact id} -> delete contact
+- /api/create -> create contact
 ----------
 # Specification : 
 - Login can't be duplicate
